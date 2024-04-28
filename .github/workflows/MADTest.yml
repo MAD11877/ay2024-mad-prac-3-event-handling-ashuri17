@@ -1,0 +1,43 @@
+name: MAD Practical 3.0
+on:
+  push:
+    branches: [main, master]
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: setupJava
+        uses: actions/setup-java@v4
+        with: 
+          distribution: 'temurin'
+          java-version: '17'
+          
+      - name: Checkout Source Codes
+        uses: actions/checkout@v2
+        
+      - name: Checkout Test Scripts
+        uses: actions/checkout@v2
+        with:
+          repository: lowkh/MAD_JunitPrac3_
+          path: testDirectory
+      - name: Check files
+        run: |
+            ls
+
+      - name: Create Test Files
+        run: |
+          cp app/src/main/res/layout/activity_main.xml testDirectory/test.xml
+          cp testDirectory/Practice3Test.java app/src/test/java/sg/edu/np/mad/madpractical3/UserTest.java
+          cd app/src/test/java/sg/edu/np/mad/madpractical3
+
+  
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+  
+      - name: Run Android Tests
+        run: ./gradlew test -Dorg.gradle.java.home=/usr/lib/jvm/temurin-17-jdk-amd64
+        
+      - name: Build Project
+        run: ./gradlew assemble -Dorg.gradle.java.home=/usr/lib/jvm/temurin-17-jdk-amd64
